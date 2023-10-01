@@ -11,11 +11,14 @@ namespace HometaskDeckCards
     {
         static void Main()
         {
+            UserInput userInput = new UserInput();
+            userInput.ReadUserInput();
+
             CardsInHand cardsInHand = new CardsInHand();
 
-            Player player = new Player("Jhon");
+            Player player = new Player(userInput.PlayerName);
 
-            player.AddCards(cardsInHand.GetCardsInHand(12));
+            player.AddCards(cardsInHand.GetCardsInHand(userInput.PlayerCountCards));
 
             Console.WriteLine($"Игрок: {player.Name}\n");
 

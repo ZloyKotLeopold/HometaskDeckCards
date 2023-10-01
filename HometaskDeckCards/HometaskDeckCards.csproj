@@ -49,6 +49,7 @@
     <Compile Include="Scripts\CardsInHand.cs" />
     <Compile Include="Scripts\DeckFactory.cs" />
     <Compile Include="Scripts\Player.cs" />
+    <Compile Include="Scripts\UserInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
