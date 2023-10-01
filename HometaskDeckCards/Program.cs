@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HometaskDeckCards.Scripts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,13 @@ namespace HometaskDeckCards
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
+            Deck deck = new Deck();
+            foreach (var card in deck.ReadOnlyDeck)
+            {
+                Console.WriteLine($"{card._rank} {card._suit}\n");
+            }
         }
     }
 }
