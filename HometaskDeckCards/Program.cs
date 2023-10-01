@@ -12,11 +12,18 @@ namespace HometaskDeckCards
         static void Main()
         {
             CardsInHand cardsInHand = new CardsInHand();
-            
-            foreach (var card in cardsInHand.GetCardsInHand(1))
+
+            Player player = new Player("Jhon");
+
+            player.AddCards(cardsInHand.GetCardsInHand(12));
+
+            Console.WriteLine($"Игрок: {player.Name}\n");
+
+            foreach (var card in player.ReadOnlyPlayerCards)
             {
                 Console.WriteLine($"{card._rank} {card._suit}");
             }
+
         }
     }
 }

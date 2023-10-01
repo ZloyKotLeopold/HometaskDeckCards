@@ -19,6 +19,13 @@ namespace HometaskDeckCards.Scripts
         {
             _playerCards.Clear();
 
+            if (_allCards.Count <= playerCardsCount)
+            {
+                Console.WriteLine($"Карты в колоде закончились, сданы последние {_allCards.Count} карт.\n");
+
+                return _allCards;
+            }
+
             Random random = new Random();
 
             for (int i = 0; i < playerCardsCount; i++)
@@ -30,6 +37,11 @@ namespace HometaskDeckCards.Scripts
                 _playerCards.Add(card);
 
                 _allCards.RemoveAt(randomCardIndex);
+            }
+
+            if(_playerCards != null)
+            {
+                Console.WriteLine($"Сданы {_playerCards.Count} карт, в колоде осталось {_allCards.Count} карт.\n\n");
             }
 
             return _playerCards;
