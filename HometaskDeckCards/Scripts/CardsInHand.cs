@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 namespace HometaskDeckCards.Scripts
 {
     public class CardsInHand
