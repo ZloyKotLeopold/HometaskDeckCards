@@ -11,10 +11,11 @@ namespace HometaskDeckCards
     {
         static void Main()
         {
-            Deck deck = new Deck();
-            foreach (var card in deck.ReadOnlyDeck)
+            CardsInHand cardsInHand = new CardsInHand();
+            
+            foreach (var card in cardsInHand.GetCardsInHand(1))
             {
-                Console.WriteLine($"{card._rank} {card._suit}\n");
+                Console.WriteLine($"{card._rank} {card._suit}");
             }
         }
     }

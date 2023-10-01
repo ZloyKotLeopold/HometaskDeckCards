@@ -27,14 +27,11 @@ namespace HometaskDeckCards.Scripts
                     _deck.Add(new Card(suit, rank));
         }
 
-        public List<Card> GetShuffleDeck(List<Card> deck = null)
+        public List<Card> GetShuffleDeck()
         {
-            if (deck == null)
-                deck = _deck;
-
             Random random = new Random();
 
-            int deckCount = deck.Count;
+            int deckCount = _deck.Count;
 
             while (deckCount > 1)
             {
@@ -42,15 +39,13 @@ namespace HometaskDeckCards.Scripts
 
                 int randomCardIndex = random.Next(deckCount + 1);
 
-                Card card = deck[randomCardIndex];
+                Card card = _deck[randomCardIndex];
 
-                deck[randomCardIndex] = deck[deckCount];
-                deck[deckCount] = card;
+                _deck[randomCardIndex] = _deck[deckCount];
+                _deck[deckCount] = card;
             }
 
-            return deck;
+            return _deck;
         }
-
-        public IReadOnlyList<Card> ReadOnlyShuffleDeck => GetShuffleDeck();
     }
 }

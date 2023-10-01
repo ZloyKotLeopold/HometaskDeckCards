@@ -1,22 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace HometaskDeckCards.Scripts
 {
     public class CardsInHand
     {
+        private List<Card> _playerCards;
+        private DeckFactory _deck;
+        private List<Card> _allCards;
 
-        private List<Card> GetCards()
+        public CardsInHand()
         {
-            DeckFactory deck = new DeckFactory();
+            _playerCards = new List<Card>();
+            _deck = new DeckFactory();
+            _allCards = _deck.GetShuffleDeck();
+        }
 
-            foreach (var card in deck.ReadOnlyShuffleDeck)            
-                Console.WriteLine($"{card._rank} {card._suit}\n");           
+        public List<Card> GetCardsInHand(int playerCardsCount)
+        {
+            _playerCards.Clear();
 
-            return GetCards();
+            Random random = new Random();
+
+            for (int i = 0; i < playerCardsCount; i++)
+            {
+                int randomCardIndex = random.Next(_allCards.Count);
+
+                Card card = _allCards[randomCardIndex];
+
+                _playerCards.Add(card);
+
+                _allCards.RemoveAt(randomCardIndex);
+            }
+
+            return _playerCards;
         }
     }
 }
