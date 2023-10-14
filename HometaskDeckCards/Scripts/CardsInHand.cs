@@ -5,18 +5,19 @@ namespace HometaskDeckCards.Scripts
 {
     public class CardsInHand
     {
-        private List<Card> _playerCards;
         private DeckFactory _deck;
         private List<Card> _allCards;
+        private List<Card> _playerCards;
+        private IReadOnlyList<Card> _readOnlyCards;
 
         public CardsInHand()
-        {
-            _playerCards = new List<Card>();
+        {            
             _deck = new DeckFactory();
-            _allCards = _deck.GetShuffleDeck();
+            _playerCards = new List<Card>();
+            _allCards = (List<Card>)_deck.GetShuffleDeck();
         }
 
-        public List<Card> GetCardsInHand(int playerCardsCount)
+        public IReadOnlyList<Card> GetCardsInHand(int playerCardsCount)
         {
             _playerCards.Clear();
 
@@ -45,7 +46,9 @@ namespace HometaskDeckCards.Scripts
                 Console.WriteLine($"Сданы {_playerCards.Count} карт, в колоде осталось {_allCards.Count} карт.\n\n");
             }
 
-            return _playerCards;
+            _readOnlyCards = (IReadOnlyList<Card>)_playerCards;
+
+            return _readOnlyCards;
         }
     }
 }

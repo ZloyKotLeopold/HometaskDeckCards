@@ -19,6 +19,7 @@ namespace HometaskDeckCards.Scripts
         public void ReadUserInput()
         {
             Console.Clear();
+
             do
             {
                 Console.WriteLine(MassengInputName);

@@ -14,7 +14,7 @@ namespace HometaskDeckCards.Scripts
             _cards = new List<Card>();
         }
 
-        public void AddCards(List<Card> cards)
+        public void AddCards(IReadOnlyList<Card> cards)
         {
             foreach (var card in cards) 
             {

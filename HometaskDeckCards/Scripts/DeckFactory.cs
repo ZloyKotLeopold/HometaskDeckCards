@@ -6,6 +6,7 @@ namespace HometaskDeckCards.Scripts
     public class DeckFactory
     {
         private List<Card> _deck;
+        private IReadOnlyList<Card> _readOnlyDeck;
 
         public DeckFactory()
         {
@@ -24,7 +25,7 @@ namespace HometaskDeckCards.Scripts
                     _deck.Add(new Card(suit, rank));
         }
 
-        public List<Card> GetShuffleDeck()
+        public IReadOnlyList<Card> GetShuffleDeck()
         {
             Random random = new Random();
 
@@ -42,7 +43,9 @@ namespace HometaskDeckCards.Scripts
                 _deck[deckCount] = card;
             }
 
-            return _deck;
+            _readOnlyDeck = (IReadOnlyList<Card>) _deck;
+
+            return _readOnlyDeck;
         }
     }
 }
