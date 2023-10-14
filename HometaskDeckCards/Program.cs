@@ -61,12 +61,7 @@ namespace HometaskDeckCards
                 _cards.Add(card);
             }
 
-            ReadOnlyPlayerCards = GetPlayerCards(_cards);
-        }
-
-        private IReadOnlyList<Card> GetPlayerCards(List<Card> cards)
-        {
-            return (IReadOnlyList<Card>)cards;
+            ReadOnlyPlayerCards = _cards;
         }
     }
 
@@ -121,7 +116,6 @@ namespace HometaskDeckCards
     public class DeckFactory
     {
         private List<Card> _deck;
-        private IReadOnlyList<Card> _readOnlyDeck;
 
         public DeckFactory()
         {
@@ -158,9 +152,7 @@ namespace HometaskDeckCards
                 _deck[deckCount] = card;
             }
 
-            _readOnlyDeck = _deck;
-
-            return _readOnlyDeck;
+            return _deck;
         }
     }
 
@@ -169,7 +161,6 @@ namespace HometaskDeckCards
         private DeckFactory _deck;
         private List<Card> _allCards;
         private List<Card> _playerCards;
-        private IReadOnlyList<Card> _readOnlyCards;
 
         public CardsInHand()
         {
@@ -207,9 +198,7 @@ namespace HometaskDeckCards
                 Console.WriteLine($"Сданы {_playerCards.Count} карт, в колоде осталось {_allCards.Count} карт.\n\n");
             }
 
-            _readOnlyCards = (IReadOnlyList<Card>)_playerCards;
-
-            return _readOnlyCards;
+            return _playerCards;
         }
     }
 }
