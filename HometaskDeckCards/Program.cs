@@ -12,15 +12,15 @@ namespace HometaskDeckCards
 
             while (!userInput.IsExit)
             {
-                userInput.ReadUserInput();
+                userInput.Read();
 
                 Player player = new Player(userInput.PlayerName);
 
-                player.AddCards(cardsInHand.GetCardsInHand(userInput.PlayerCountCards));
+                player.AddCards(cardsInHand.GetCards(userInput.Cards));
 
                 Console.WriteLine($"Игрок: {player.Name}\n");
 
-                foreach (var card in player.ReadOnlyPlayerCards)
+                foreach (var card in player.ReadOnlyCards)
                     Console.WriteLine($"{card.Rank} {card.Suit}");
 
                 Console.WriteLine("Для продолжения нажмите любую кнопку.");
@@ -45,7 +45,7 @@ namespace HometaskDeckCards
     public class Player
     {
         public string Name { get; private set; }
-        public IReadOnlyList<Card> ReadOnlyPlayerCards { get; private set; }
+        public IReadOnlyList<Card> ReadOnlyCards { get; private set; }
         private List<Card> _cards;
 
         public Player(string name)
@@ -61,7 +61,7 @@ namespace HometaskDeckCards
                 _cards.Add(card);
             }
 
-            ReadOnlyPlayerCards = _cards;
+            ReadOnlyCards = _cards;
         }
     }
 
@@ -76,10 +76,10 @@ namespace HometaskDeckCards
         const string MassengErrorInputExit = "Вы неворно ввели команду на выход.";
 
         public string PlayerName { get; private set; }
-        public int PlayerCountCards { get; private set; }
+        public int Cards { get; private set; }
         public bool IsExit { get; private set; }
 
-        public void ReadUserInput()
+        public void Read()
         {
             Console.Clear();
 
@@ -95,9 +95,9 @@ namespace HometaskDeckCards
 
             Console.WriteLine(MassengInputCountCard);
 
-            PlayerCountCards = uint.TryParse(Console.ReadLine(), out uint tempPlayerCountCards) ? (int)tempPlayerCountCards : 0;
+            Cards = uint.TryParse(Console.ReadLine(), out uint tempPlayerCountCards) ? (int)tempPlayerCountCards : 0;
 
-            if (PlayerCountCards == 0)
+            if (Cards == 0)
                 Console.WriteLine(MassengErrorInputCountCard);
 
             Console.WriteLine(MassengInputExit);
@@ -169,7 +169,7 @@ namespace HometaskDeckCards
             _allCards = (List<Card>)_deck.GetShuffleDeck();
         }
 
-        public IReadOnlyList<Card> GetCardsInHand(int playerCardsCount)
+        public IReadOnlyList<Card> GetCards(int playerCardsCount)
         {
             _playerCards.Clear();
 
