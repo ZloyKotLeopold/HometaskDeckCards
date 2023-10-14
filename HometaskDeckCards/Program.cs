@@ -8,18 +8,25 @@ namespace HometaskDeckCards
         static void Main()
         {
             UserInput userInput = new UserInput();
-            userInput.ReadUserInput();
-
             CardsInHand cardsInHand = new CardsInHand();
 
-            Player player = new Player(userInput.PlayerName);
+            while (!userInput.IsExit)
+            {
+                userInput.ReadUserInput();
 
-            player.AddCards(cardsInHand.GetCardsInHand(userInput.PlayerCountCards));
+                Player player = new Player(userInput.PlayerName);
 
-            Console.WriteLine($"Игрок: {player.Name}\n");
+                player.AddCards(cardsInHand.GetCardsInHand(userInput.PlayerCountCards));
 
-            foreach (var card in player.ReadOnlyPlayerCards)           
-                Console.WriteLine($"{card._rank} {card._suit}");          
+                Console.WriteLine($"Игрок: {player.Name}\n");
+
+                foreach (var card in player.ReadOnlyPlayerCards)
+                    Console.WriteLine($"{card._rank} {card._suit}");
+
+                Console.WriteLine("Для продолжения нажмите любую кнопку.");
+
+                Console.ReadLine();
+            }
         }
     }
 }
