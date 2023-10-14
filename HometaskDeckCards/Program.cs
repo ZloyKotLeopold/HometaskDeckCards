@@ -148,10 +148,7 @@ namespace HometaskDeckCards
 
                 int randomCardIndex = random.Next(deckCount + 1);
 
-                Card card = shuffledDeck[randomCardIndex];
-
-                shuffledDeck[randomCardIndex] = shuffledDeck[deckCount];
-                shuffledDeck[deckCount] = card;
+                (shuffledDeck[deckCount], shuffledDeck[randomCardIndex]) = (shuffledDeck[randomCardIndex], shuffledDeck[deckCount]);
             }
 
             return shuffledDeck;
