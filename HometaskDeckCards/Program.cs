@@ -45,7 +45,8 @@ namespace HometaskDeckCards
     public class Player
     {
         public string Name { get; private set; }
-        public IReadOnlyList<Card> ReadOnlyCards { get; private set; }
+        public IReadOnlyList<Card> ReadOnlyCards => _cards;
+
         private List<Card> _cards;
 
         public Player(string name)
@@ -56,12 +57,7 @@ namespace HometaskDeckCards
 
         public void AddCards(IReadOnlyList<Card> cards)
         {
-            foreach (var card in cards)
-            {
-                _cards.Add(card);
-            }
-
-            ReadOnlyCards = _cards;
+            _cards.AddRange(cards);
         }
     }
 
