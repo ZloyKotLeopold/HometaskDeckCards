@@ -138,7 +138,9 @@ namespace HometaskDeckCards
         {
             Random random = new Random();
 
-            int deckCount = _deck.Count;
+            List<Card> shuffledDeck = new List<Card>(_deck);
+
+            int deckCount = shuffledDeck.Count;
 
             while (deckCount > 1)
             {
@@ -146,13 +148,13 @@ namespace HometaskDeckCards
 
                 int randomCardIndex = random.Next(deckCount + 1);
 
-                Card card = _deck[randomCardIndex];
+                Card card = shuffledDeck[randomCardIndex];
 
-                _deck[randomCardIndex] = _deck[deckCount];
-                _deck[deckCount] = card;
+                shuffledDeck[randomCardIndex] = shuffledDeck[deckCount];
+                shuffledDeck[deckCount] = card;
             }
 
-            return _deck;
+            return shuffledDeck;
         }
     }
 
