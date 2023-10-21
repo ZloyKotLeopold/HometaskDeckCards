@@ -59,6 +59,7 @@ namespace HometaskDeckCards
         private HandlerInput _handlerInput;
         private Player _player;
         private Deck _deck;
+        private int _cards;
 
         public Game()
         {
@@ -67,21 +68,16 @@ namespace HometaskDeckCards
             _deck = new Deck((List<Card>)_deckFactory.GetNewDeck());
         }
 
-        private enum MenuOptions
+        private enum MenuOption
         {
             CreateCard = 1,
             Exit = 2
         }
 
-        int cards;
-
         public void Run()
         {
             _player = new Player();
 
-            int input;
-            int lengthMenuItems = Enum.GetValues(typeof(MenuOptions)).Length;
-            bool isInput;
             bool isExit = true;
             string name;
 
@@ -93,42 +89,24 @@ namespace HometaskDeckCards
             {
                 Console.Clear();
 
-                Console.WriteLine($"Чтобы игроку дать карт нажмите - {(int)MenuOptions.CreateCard}.\nДля выхода из игры нажмите - {(int)MenuOptions.Exit}.");
+                Console.WriteLine($"Чтобы игроку дать карт нажмите - {(int)MenuOption.CreateCard}.\nДля выхода из игры нажмите - {(int)MenuOption.Exit}.");
 
-                uint.TryParse(Console.ReadLine(), out uint tempInput);
-                input = (int)tempInput;
-
-                isInput = Convert.ToBoolean(input);
-
-                if (input <= lengthMenuItems && isInput)
+                if (uint.TryParse(Console.ReadLine(), out uint userCommand))
                 {
-                    if (input == (int)MenuOptions.CreateCard)
+                    switch (userCommand)
                     {
-                        if (Convert.ToBoolean(cards))
-                        {
-                            Console.WriteLine("Сколько еще дать карт?");
-
-                            cards += _handlerInput.GetCountCards();
-
-                            _player.AddCards(_deck.GetCards(cards));
-                        }
-                        else
-                        {
-                            Console.WriteLine("Ведите количество карт которое вы хотите дать игроку.");
-
-                            _player.AddCards(_deck.GetCards(_handlerInput.GetCountCards()));
-                        }
-                    }
-                    else if (input == (int)MenuOptions.Exit)
-                    {
-                        isExit = false;
+                        case (int)MenuOption.CreateCard:
+                            CardHandler();
+                            break;
+                        case (int)MenuOption.Exit:
+                            isExit = false;
+                            break;
+                        default:
+                            Console.WriteLine("Неверное значение.");
+                            break;
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Неверное значение.");
-                }
-
+              
                 Console.WriteLine($"Игрок: {_player.Name}\n");
 
                 _player.ShowCards();
@@ -136,10 +114,28 @@ namespace HometaskDeckCards
                 Console.ReadLine();
             }
         }
+
+        public void CardHandler()
+        {
+            if (Convert.ToBoolean(_cards))
+            {
+                Console.WriteLine("Сколько еще дать карт?");
+
+                _cards += _handlerInput.GetCountCards();
+            }
+            else
+            {
+                Console.WriteLine("Ведите количество карт которое вы хотите дать игроку.");
+
+                _cards = _handlerInput.GetCountCards();
+            }
+
+            _player.AddCards(_deck.GetCards(_cards));
+        }
     }
 
     public class HandlerInput
-    {
+    {      
         public string GetName()
         {
             const int MinCountName = 2;
@@ -207,11 +203,11 @@ namespace HometaskDeckCards
 
     public class Deck
     {
-        private List<Card> _deck;
+        private List<Card> _deckCards;
 
         public Deck(List<Card> deck)
         {
-            _deck = deck;
+            _deckCards = deck;
         }
 
         public IReadOnlyList<Card> GetCards(int playerCardsCount)
@@ -220,25 +216,29 @@ namespace HometaskDeckCards
 
             int firstCard = 0;
 
-            if (_deck.Count <= playerCardsCount)
+            if (_deckCards.Count <= playerCardsCount)
             {
-                Console.WriteLine($"Карты в колоде закончились, сданы последние {_deck.Count} карт.\n");
+                Console.WriteLine($"Карты в колоде закончились, сданы последние {_deckCards.Count} карт.\n");
 
-                return _deck;
+                playerCards.AddRange(_deckCards);
+
+                _deckCards.Clear();
+
+                return playerCards;
             }
 
             for (int index = 0; index < playerCardsCount; index++)
             {
-                Card card = _deck[firstCard];
+                Card card = _deckCards[firstCard];
 
                 playerCards.Add(card);
 
-                _deck.RemoveAt(firstCard);
+                _deckCards.RemoveAt(firstCard);
             }
 
             if (playerCards != null)
             {
-                Console.WriteLine($"Сданы {playerCards.Count} карт, в колоде осталось {_deck.Count} карт.\n\n");
+                Console.WriteLine($"Сданы {playerCards.Count} карт, в колоде осталось {_deckCards.Count} карт.\n\n");
             }
 
             return playerCards;
