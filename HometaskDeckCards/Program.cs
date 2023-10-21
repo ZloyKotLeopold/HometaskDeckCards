@@ -7,52 +7,37 @@ namespace HometaskDeckCards
     {
         static void Main()
         {
-            UserInput userInput = new UserInput();
-            Croupier cardsInHand = new Croupier();
-
-            userInput.SetName();
-
-            Player player = new Player(userInput.PlayerName);
-
-            while (userInput.IsExit == false)
-            {
-                userInput.Menu();
-
-                player.AddCards(cardsInHand.GetCards(userInput.Cards));
-
-                Console.WriteLine($"Игрок: {player.Name}\n");
-
-                player.ShowCards();
-
-                Console.WriteLine("\nДля продолжения нажмите любую кнопку.");
-
-                Console.ReadLine();
-            }
+            Game game = new Game();
+            game.Run();
         }
     }
 
     public class Card
     {
-        public string Suit { get; private set; }
-        public string Rank { get; private set; }
-
         public Card(string suit, string rank)
         {
             Suit = suit;
             Rank = rank;
         }
+
+        public string Suit { get; private set; }
+        public string Rank { get; private set; }
     }
 
     public class Player
     {
-        public string Name { get; private set; }
-
         private List<Card> _cards;
 
-        public Player(string name)
+        public Player()
+        {
+            _cards = new List<Card>();
+        }
+
+        public string Name { get; private set; }
+
+        public void SetName(string name)
         {
             Name = name;
-            _cards = new List<Card>();
         }
 
         public void ShowCards()
@@ -68,75 +53,114 @@ namespace HometaskDeckCards
         }
     }
 
-    public class UserInput
-    {       
-        public string PlayerName { get; private set; }
-        public int Cards { get; private set; }
-        public bool IsExit { get; private set; }
+    public class Game
+    {
+        private DeckFactory _deckFactory;
+        private HandlerInput _handlerInput;
+        private Player _player;
+        private Deck _deck;
 
-        public void Menu()
-        {            
-            const int ParameterCriatePlayer = 1;
-            const int ParameterExit = 2;
-            const int CountMenuItems = 2;
+        public Game()
+        {
+            _handlerInput = new HandlerInput();
+            _deckFactory = new DeckFactory();
+            _deck = new Deck((List<Card>)_deckFactory.GetNewDeck());
+        }
+
+        private enum MenuOptions
+        {
+            CreateCard = 1,
+            Exit = 2
+        }
+
+        int cards;
+
+        public void Run()
+        {
+            _player = new Player();
 
             int input;
-            bool isActive = true;
+            int lengthMenuItems = Enum.GetValues(typeof(MenuOptions)).Length;
+            bool isInput;
+            bool isExit = true;
+            string name;
 
-            Console.Clear();
+            name = _handlerInput.GetName();
 
-            Console.WriteLine($"Чтобы игроку дать карт нажмите - {ParameterCriatePlayer}.\nДля выхода из игры нажмите - {ParameterExit}.");
+            _player.SetName(name);
 
-            while (isActive)
+            while (isExit)
             {
-                input = uint.TryParse(Console.ReadLine(), out uint tempInput) ? (int)tempInput : 0;
+                Console.Clear();
 
-                if (input <= CountMenuItems && input != 0)
+                Console.WriteLine($"Чтобы игроку дать карт нажмите - {(int)MenuOptions.CreateCard}.\nДля выхода из игры нажмите - {(int)MenuOptions.Exit}.");
+
+                uint.TryParse(Console.ReadLine(), out uint tempInput);
+                input = (int)tempInput;
+
+                isInput = Convert.ToBoolean(input);
+
+                if (input <= lengthMenuItems && isInput)
                 {
-                    if (input == 1)
+                    if (input == (int)MenuOptions.CreateCard)
                     {
-                        if (Cards >= 1)
+                        if (Convert.ToBoolean(cards))
                         {
                             Console.WriteLine("Сколько еще дать карт?");
 
-                            Cards += SetCountCards();
+                            cards += _handlerInput.GetCountCards();
+
+                            _player.AddCards(_deck.GetCards(cards));
                         }
                         else
                         {
                             Console.WriteLine("Ведите количество карт которое вы хотите дать игроку.");
 
-                            Cards = SetCountCards();
+                            _player.AddCards(_deck.GetCards(_handlerInput.GetCountCards()));
                         }
                     }
-
-                    if (input == 2) IsExit = true; //Можно ли так писать?
-
-                    isActive = false;
+                    else if (input == (int)MenuOptions.Exit)
+                    {
+                        isExit = false;
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Неверное значение.");
                 }
+
+                Console.WriteLine($"Игрок: {_player.Name}\n");
+
+                _player.ShowCards();
+
+                Console.ReadLine();
             }
         }
+    }
 
-        public void SetName()
+    public class HandlerInput
+    {
+        public string GetName()
         {
             const int MinCountName = 2;
+
+            string playerName;
 
             do
             {
                 Console.Write("Введите имя игрока: ");
 
-                PlayerName = Console.ReadLine();
+                playerName = Console.ReadLine();
 
-                if (PlayerName.Length < MinCountName)
+                if (playerName.Length < MinCountName)
                     Console.WriteLine($"Имя игрока не может быть пустым и должно быть длиннее: {MinCountName}");
             }
-            while (PlayerName.Length < MinCountName);
+            while (playerName.Length < MinCountName);
+
+            return playerName;
         }
 
-        private int SetCountCards()
+        public int GetCountCards()
         {
             return uint.TryParse(Console.ReadLine(), out uint tempPlayerCountCards) ? (int)tempPlayerCountCards : 0;
         }
@@ -144,18 +168,13 @@ namespace HometaskDeckCards
 
     public class DeckFactory
     {
-        private List<Card> _deck;
+        public IReadOnlyList<Card> GetNewDeck() => ShuffleDeck();
 
-        public DeckFactory()
-        {
-            InitializeDeck();
-        }
-
-        public IReadOnlyList<Card> GetShuffleDeck()
+        private List<Card> ShuffleDeck()
         {
             Random random = new Random();
 
-            List<Card> shuffledDeck = new List<Card>(_deck);
+            List<Card> shuffledDeck = CreateCards();
 
             int deckCount = shuffledDeck.Count;
 
@@ -171,58 +190,55 @@ namespace HometaskDeckCards
             return shuffledDeck;
         }
 
-        private void InitializeDeck()
+        private List<Card> CreateCards()
         {
-            _deck = new List<Card>();
+            List<Card> deck = new List<Card>();
 
             string[] suits = { "Черви", "Бубны", "Трефы", "Пики" };
             string[] ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Валет", "Дама", "Король", "Туз" };
 
             foreach (var suit in suits)
                 foreach (var rank in ranks)
-                    _deck.Add(new Card(suit, rank));
+                    deck.Add(new Card(suit, rank));
+
+            return deck;
         }
     }
 
-    public class Croupier
+    public class Deck
     {
-        private DeckFactory _deckFactory;
-        private List<Card> _allCards;
+        private List<Card> _deck;
 
-        public Croupier()
+        public Deck(List<Card> deck)
         {
-            _deckFactory = new DeckFactory();
-            _allCards = (List<Card>)_deckFactory.GetShuffleDeck();
+            _deck = deck;
         }
 
         public IReadOnlyList<Card> GetCards(int playerCardsCount)
         {
             List<Card> playerCards = new List<Card>();
 
+            int firstCard = 0;
 
-            if (_allCards.Count <= playerCardsCount)
+            if (_deck.Count <= playerCardsCount)
             {
-                Console.WriteLine($"Карты в колоде закончились, сданы последние {_allCards.Count} карт.\n");
+                Console.WriteLine($"Карты в колоде закончились, сданы последние {_deck.Count} карт.\n");
 
-                return _allCards;
+                return _deck;
             }
 
-            Random random = new Random();
-
-            for (int i = 0; i < playerCardsCount; i++)
+            for (int index = 0; index < playerCardsCount; index++)
             {
-                int randomCardIndex = random.Next(_allCards.Count);
-
-                Card card = _allCards[randomCardIndex];
+                Card card = _deck[firstCard];
 
                 playerCards.Add(card);
 
-                _allCards.RemoveAt(randomCardIndex);
+                _deck.RemoveAt(firstCard);
             }
 
             if (playerCards != null)
             {
-                Console.WriteLine($"Сданы {playerCards.Count} карт, в колоде осталось {_allCards.Count} карт.\n\n");
+                Console.WriteLine($"Сданы {playerCards.Count} карт, в колоде осталось {_deck.Count} карт.\n\n");
             }
 
             return playerCards;
