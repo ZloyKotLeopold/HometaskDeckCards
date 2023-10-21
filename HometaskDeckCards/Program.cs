@@ -98,9 +98,11 @@ namespace HometaskDeckCards
                         case (int)MenuOption.CreateCard:
                             CardHandler();
                             break;
+
                         case (int)MenuOption.Exit:
                             isExit = false;
                             break;
+
                         default:
                             Console.WriteLine("Неверное значение.");
                             break;
