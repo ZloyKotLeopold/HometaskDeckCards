@@ -96,7 +96,7 @@ namespace HometaskDeckCards
                     switch (userCommand)
                     {
                         case (int)MenuOption.CreateCard:
-                            CardHandler();
+                            GiveCards();
                             break;
 
                         case (int)MenuOption.Exit:
@@ -117,7 +117,7 @@ namespace HometaskDeckCards
             }
         }
 
-        public void CardHandler()
+        public void GiveCards()
         {
             if (Convert.ToBoolean(_cards))
             {
@@ -235,7 +235,7 @@ namespace HometaskDeckCards
 
                 playerCards.Add(card);
 
-                _deckCards.RemoveAt(firstCard);
+                _deckCards.Remove(card);
             }
 
             if (playerCards != null)
